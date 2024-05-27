@@ -1,10 +1,10 @@
 from dualsense_controller import DualSenseController, DeviceInfo
-
 from components.battery import Battery
 from components.digital_buttons import DigitalButtons
 from components.analog_buttons import AnalogButtons
 
 from time import sleep
+from threading import Thread
 
 
 class DualSenseHandler():
@@ -39,6 +39,10 @@ class DualSenseHandler():
         self.analog_buttons = AnalogButtons(self.controller)
         
         self.__register_callbacks()
+        
+        # Thread for running the loop
+        self.thread = Thread(target=self.loop)
+        self.thread.start()
     
     # METHODS -------------------------------------------------------------------------------------------
     
@@ -113,8 +117,6 @@ class DualSenseHandler():
         while self.is_running:
             sleep(0.001)
             self.__update_states()
-            print(self.to_string())
-            print(" ")
             
         self.controller.deactivate()
     
@@ -127,6 +129,3 @@ if __name__ == "__main__":
     device_index = 0
     ds_handler = DualSenseHandler(device_index)
     ds_handler.loop()
-    
-    
-    
